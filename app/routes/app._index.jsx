@@ -229,9 +229,7 @@ export default function Home() {
       <s-section slot="aside" heading="Tips">
         <s-unordered-list>
           <s-list-item>Show a price beside every paid choice so shoppers know the total before paying.</s-list-item>
-          <s-list-item>Use conditions to hide follow-up fields until they matter, like engraving text after &quot;Add engraving&quot;.</s-list-item>
-          <s-list-item>Packing slip doesn&apos;t list choices? Add the line item properties snippet from Settings.</s-list-item>
-        </s-unordered-list>
+          <s-list-item>Use conditions to hide follow-up fields until they matter, like engraving text after &quot;Add engraving&quot;.</s-list-item>        </s-unordered-list>
       </s-section>
     </s-page>
   );

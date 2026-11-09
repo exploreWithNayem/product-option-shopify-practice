@@ -41,9 +41,7 @@ export default function App() {
       <s-app-nav>
         <s-link href="/app">Home</s-link>
         <s-link href="/app/sets">Option sets</s-link>
-        <s-link href="/app/analytics">Analytics</s-link>
         <s-link href="/app/settings">Settings</s-link>
-        <s-link href="/app/plan">Plan</s-link>
       </s-app-nav>
       {setupProblems.length > 0 && (
         <div style={{ padding: "16px 16px 0" }}>
