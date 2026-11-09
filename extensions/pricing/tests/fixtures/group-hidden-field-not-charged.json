@@ -1,0 +1,144 @@
+{
+  "payload": {
+    "export": "cart-transform-run",
+    "target": "cart.transform.run",
+    "input": {
+      "presentmentCurrencyRate": "1.0",
+      "cartTransform": {
+        "config": {
+          "jsonValue": {
+            "addonVariantId": "gid://shopify/ProductVariant/999",
+            "pricingPaused": false
+          }
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 1,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "20.0",
+                "currencyCode": "USD"
+              }
+            },
+            "selection": {
+              "value": "{\"s\":\"set_grp\",\"v\":1,\"a\":{\"msg\":\"Hi\",\"express\":true}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_grp",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap"
+                      },
+                      {
+                        "id": "grp",
+                        "type": "group",
+                        "label": "Wrapping",
+                        "condition": {
+                          "action": "show",
+                          "match": "all",
+                          "rules": [
+                            {
+                              "source": "field",
+                              "field": "wrap",
+                              "op": "not_empty"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "msg",
+                        "type": "text",
+                        "label": "Message",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 4
+                        }
+                      },
+                      {
+                        "id": "grp2",
+                        "type": "group",
+                        "label": "Delivery"
+                      },
+                      {
+                        "id": "express",
+                        "type": "toggle",
+                        "label": "Express",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 3
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "lineExpand": {
+            "cartLineId": "gid://shopify/CartLine/1",
+            "expandedCartItems": [
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/1",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "20.00"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Express",
+                    "value": "Yes"
+                  },
+                  {
+                    "key": "_shine_options",
+                    "value": "{\"s\":\"set_grp\",\"v\":1,\"a\":{\"msg\":\"Hi\",\"express\":true}}"
+                  }
+                ]
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/999",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "3.00"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Add-ons",
+                    "value": "Express +3.00 (USD)"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

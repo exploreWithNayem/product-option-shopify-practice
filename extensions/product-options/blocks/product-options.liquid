@@ -1,0 +1,56 @@
+{%- liquid
+  assign shine_product = block.settings.product | default: product
+-%}
+<div class="shine-block" {{ block.shopify_attributes }}>
+  {%- if request.design_mode and shine_product.metafields['$app'].options.value == blank -%}
+    <p class="shine-editor-hint">{{ 'shine.editor_no_set' | t }}</p>
+  {%- endif -%}
+  {%- render 'shine-fields',
+    product: shine_product,
+    uid: block.id,
+    mode: 'block',
+    accent: block.settings.accent,
+    swatch_size: block.settings.swatch_size,
+    show_total: block.settings.show_total
+  -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.options.name",
+  "target": "section",
+  "enabled_on": { "templates": ["product"] },
+  "javascript": "shine-options.js",
+  "stylesheet": "shine-options.css",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:blocks.options.settings.product",
+      "autofill": true
+    },
+    {
+      "type": "color",
+      "id": "accent",
+      "label": "t:blocks.options.settings.accent",
+      "info": "t:blocks.options.settings.accent_info"
+    },
+    {
+      "type": "range",
+      "id": "swatch_size",
+      "min": 28,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "t:blocks.options.settings.swatch_size",
+      "default": 44
+    },
+    {
+      "type": "checkbox",
+      "id": "show_total",
+      "label": "t:blocks.options.settings.show_total",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

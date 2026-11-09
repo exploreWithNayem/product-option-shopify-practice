@@ -1,0 +1,126 @@
+{
+  "payload": {
+    "export": "cart-transform-run",
+    "target": "cart.transform.run",
+    "input": {
+      "presentmentCurrencyRate": "0.92",
+      "cartTransform": {
+        "config": {
+          "jsonValue": {
+            "addonVariantId": "gid://shopify/ProductVariant/999",
+            "pricingPaused": false
+          }
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 1,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "64.4",
+                "currencyCode": "EUR"
+              }
+            },
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\",\"wrap\":true}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "lineExpand": {
+            "cartLineId": "gid://shopify/CartLine/1",
+            "expandedCartItems": [
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/1",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "64.40"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Monogram on cuff",
+                    "value": "AB"
+                  },
+                  {
+                    "key": "Gift wrap",
+                    "value": "Yes"
+                  },
+                  {
+                    "key": "_shine_options",
+                    "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\",\"wrap\":true}}"
+                  }
+                ]
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/999",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "13.80"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Add-ons",
+                    "value": "Monogram on cuff +9.20, Gift wrap +4.60 (EUR)"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

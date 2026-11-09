@@ -1,0 +1,17 @@
+{
+  "blocks": {
+    "options": {
+      "name": "Product options",
+      "settings": {
+        "product": "Product",
+        "accent": "Accent color",
+        "accent_info": "Used for selected choices and focus rings. Leave empty to use the theme's text color.",
+        "swatch_size": "Swatch size",
+        "show_total": "Show the total with add-ons on the add-to-cart button"
+      }
+    }
+  },
+  "embed": {
+    "name": "Product options"
+  }
+}

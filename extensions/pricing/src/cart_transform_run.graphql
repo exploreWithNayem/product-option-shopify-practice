@@ -1,0 +1,39 @@
+query CartTransformRunInput {
+  presentmentCurrencyRate
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+          currencyCode
+        }
+      }
+      selection: attribute(key: "_shine_options") {
+        value
+      }
+      sellingPlanAllocation {
+        sellingPlan {
+          id
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          product {
+            pricing: metafield(namespace: "$app", key: "pricing") {
+              jsonValue
+            }
+          }
+        }
+      }
+    }
+  }
+  cartTransform {
+    config: metafield(namespace: "$app", key: "config") {
+      jsonValue
+    }
+  }
+}

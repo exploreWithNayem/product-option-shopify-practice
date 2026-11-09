@@ -1,0 +1,33 @@
+{%- doc -%}
+  Renders one entry of an option set: a layout/content element (shine-display)
+  or an input field (shine-field). Option groups are handled by shine-fields.
+
+  @param {object} field - Entry from the option set
+  @param {string} uid - Unique id prefix for this rendering
+  @param {string} locale - Shopper locale
+  @param {string} [fallback] - Option set default locale
+  @param {number} base_cents - Selected variant price in presentment cents
+  @param {boolean} same_currency - Shopper currency equals shop currency
+  @param {number} max_mb - Upload size limit in MB
+  @param {number} [plan_max_files] - Upload count limit from the plan
+
+  @example
+  {% render 'shine-item', field: field, uid: 'shine-1', locale: 'en', base_cents: 7000, same_currency: true, max_mb: 5 %}
+{%- enddoc -%}
+{%- liquid
+  assign shine_display_types = 'heading,paragraph,divider,spacer,popup,design_layer' | split: ','
+-%}
+{%- if shine_display_types contains field.type -%}
+  {%- render 'shine-display', field: field, uid: uid, locale: locale, fallback: fallback -%}
+{%- else -%}
+  {%- render 'shine-field',
+    field: field,
+    uid: uid,
+    locale: locale,
+    fallback: fallback,
+    base_cents: base_cents,
+    same_currency: same_currency,
+    max_mb: max_mb,
+    plan_max_files: plan_max_files
+  -%}
+{%- endif -%}

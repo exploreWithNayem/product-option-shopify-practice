@@ -1,0 +1,474 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "shop": {
+        "localTime": {
+          "date": "2026-11-06"
+        }
+      },
+      "validation": {
+        "config": null
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/2",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "product": {
+                "id": "gid://shopify/Product/2",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/3",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/3",
+              "product": {
+                "id": "gid://shopify/Product/3",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/4",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/4",
+              "product": {
+                "id": "gid://shopify/Product/4",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/5",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/5",
+              "product": {
+                "id": "gid://shopify/Product/5",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/6",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/6",
+              "product": {
+                "id": "gid://shopify/Product/6",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/7",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/7",
+              "product": {
+                "id": "gid://shopify/Product/7",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/8",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/8",
+              "product": {
+                "id": "gid://shopify/Product/8",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/9",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/9",
+              "product": {
+                "id": "gid://shopify/Product/9",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/99",
+            "selection": null,
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/99",
+              "product": {
+                "id": "gid://shopify/Product/99",
+                "title": "Pocket square",
+                "pricing": null
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "You can check out up to 8 personalized items at a time. Please split your order.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

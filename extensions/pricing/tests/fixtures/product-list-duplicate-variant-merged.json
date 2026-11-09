@@ -1,0 +1,123 @@
+{
+  "payload": {
+    "export": "cart-transform-run",
+    "target": "cart.transform.run",
+    "input": {
+      "presentmentCurrencyRate": "1.0",
+      "cartTransform": {
+        "config": {
+          "jsonValue": {
+            "addonVariantId": "gid://shopify/ProductVariant/999",
+            "pricingPaused": false
+          }
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 1,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "10.0",
+                "currencyCode": "USD"
+              }
+            },
+            "selection": {
+              "value": "{\"s\":\"set_dup\",\"v\":1,\"a\":{\"a\":\"x\",\"b\":\"y\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_dup",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "a",
+                        "type": "product_list",
+                        "label": "Box A",
+                        "values": [
+                          {
+                            "id": "x",
+                            "label": "Gift box",
+                            "variantId": "gid://shopify/ProductVariant/11",
+                            "price": 6
+                          }
+                        ]
+                      },
+                      {
+                        "id": "b",
+                        "type": "product_list",
+                        "label": "Box B",
+                        "values": [
+                          {
+                            "id": "y",
+                            "label": "Gift box (large)",
+                            "variantId": "gid://shopify/ProductVariant/11",
+                            "price": 7.01
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "lineExpand": {
+            "cartLineId": "gid://shopify/CartLine/1",
+            "expandedCartItems": [
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/1",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "10.00"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Box A",
+                    "value": "Gift box"
+                  },
+                  {
+                    "key": "Box B",
+                    "value": "Gift box (large)"
+                  },
+                  {
+                    "key": "_shine_options",
+                    "value": "{\"s\":\"set_dup\",\"v\":1,\"a\":{\"a\":\"x\",\"b\":\"y\"}}"
+                  }
+                ]
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/11",
+                "quantity": 2,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "6.51"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

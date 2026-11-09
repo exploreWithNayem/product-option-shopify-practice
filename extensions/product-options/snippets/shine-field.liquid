@@ -1,0 +1,535 @@
+{%- doc -%}
+  Renders one Shine Options field. Inputs carry no name and belong to no form
+  (form="shine-none"): the storefront script writes the line item properties.
+
+  @param {object} field - Field from the option set
+  @param {string} uid - Unique id prefix for this rendering
+  @param {string} locale - Shopper locale
+  @param {string} [fallback] - Option set default locale
+  @param {number} base_cents - Selected variant price in presentment cents
+  @param {boolean} same_currency - Shopper currency equals shop currency
+  @param {number} max_mb - Upload size limit in MB
+  @param {number} [plan_max_files] - Upload count limit from the plan
+
+  @example
+  {% render 'shine-field', field: field, uid: 'shine-1', locale: 'en', base_cents: 7000, same_currency: true, max_mb: 5 %}
+{%- enddoc -%}
+{%- liquid
+  assign type = field.type
+  assign fid = uid | append: '-' | append: field.id | handleize
+  capture label
+    render 'shine-t', value: field.label, locale: locale, fallback: fallback
+  endcapture
+  capture help
+    render 'shine-t', value: field.help, locale: locale, fallback: fallback
+  endcapture
+  capture placeholder
+    render 'shine-t', value: field.placeholder, locale: locale, fallback: fallback
+  endcapture
+
+  assign group = false
+  case type
+    when 'radio', 'checkbox_group', 'buttons', 'color_swatch', 'image_swatch', 'font_picker', 'product_list'
+      assign group = true
+  endcase
+  assign input_type = 'radio'
+  if type == 'checkbox_group'
+    assign input_type = 'checkbox'
+  elsif type == 'buttons' and field.settings.multiple
+    assign input_type = 'checkbox'
+  elsif type == 'product_list' and field.settings.multiple
+    assign input_type = 'checkbox'
+  endif
+  assign unit = field.settings.unit | default: ''
+
+  comment
+    Hex colors from settings are only used when they are #rgb / #rrggbb / #rrggbbaa.
+  endcomment
+  assign safe_default_hex = ''
+  if type == 'color_picker'
+    assign hex = field.settings.default | default: '' | strip | downcase
+    assign hex_first = hex | slice: 0
+    assign hex_rest = hex | remove_first: '#' | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: 'a' | remove: 'b' | remove: 'c' | remove: 'd' | remove: 'e' | remove: 'f'
+    assign hex_size = hex | size
+    if hex_first == '#' and hex_rest == blank and hex_size == 7
+      assign safe_default_hex = hex
+    endif
+  endif
+
+  assign hidden = false
+  if field.condition.rules.size > 0 and field.condition.action != 'hide'
+    assign hidden = true
+  endif
+
+  assign describedby = fid | append: '-error'
+  if help != blank
+    assign describedby = fid | append: '-help ' | append: describedby
+  endif
+
+  assign price_kind = field.price.type | default: 'fixed'
+  assign price_amount = field.price.amount | default: 0
+  assign max_length = field.settings.maxLength | default: 0
+-%}
+{%- capture required_mark -%}
+  {%- if field.required -%}
+    <span class="shine-req" aria-hidden="true">*</span><span class="shine-vh"> {{ 'shine.required_label' | t }}</span>
+  {%- endif -%}
+{%- endcapture -%}
+{%- if group -%}
+  <fieldset class="shine-field shine-field--{{ type | escape }}" data-shine-field="{{ field.id | escape }}"{% if hidden %} hidden{% endif %}>
+  <legend class="shine-label" id="{{ fid }}-label">
+    {{- label }}{{ required_mark -}}
+    {%- if type == 'color_swatch' or type == 'image_swatch' -%}
+      <span class="shine-selected" data-shine-selected></span>
+    {%- endif -%}
+  </legend>
+{%- else -%}
+  <div class="shine-field shine-field--{{ type | escape }}" data-shine-field="{{ field.id | escape }}"{% if hidden %} hidden{% endif %}>
+  {%- unless type == 'checkbox' or type == 'toggle' -%}
+    <label class="shine-label" for="{{ fid }}" id="{{ fid }}-label">{{ label }}{{ required_mark }}</label>
+  {%- endunless -%}
+{%- endif -%}
+
+{%- case type -%}
+  {%- when 'text', 'contact', 'number' -%}
+    {%- liquid
+      assign html_type = 'text'
+      assign inputmode = ''
+      assign autocomplete = 'off'
+      if type == 'number'
+        assign html_type = 'number'
+        assign inputmode = 'decimal'
+      elsif type == 'contact' and field.settings.format == 'phone'
+        assign html_type = 'tel'
+        assign inputmode = 'tel'
+      elsif type == 'contact'
+        assign html_type = 'email'
+        assign inputmode = 'email'
+      elsif field.settings.charset == 'numbers'
+        assign inputmode = 'numeric'
+      endif
+    -%}
+    <div class="shine-row">
+      <input
+        class="shine-input"
+        type="{{ html_type }}"
+        id="{{ fid }}"
+        form="shine-none"
+        data-shine-input
+        autocomplete="{{ autocomplete }}"
+        {% if inputmode != blank %}inputmode="{{ inputmode }}"{% endif %}
+        {% if placeholder != blank %}placeholder="{{ placeholder }}"{% endif %}
+        {% if max_length > 0 %}maxlength="{{ max_length | escape }}"{% endif %}
+        {% if type == 'number' %}
+          {% if field.settings.min != blank %}min="{{ field.settings.min | escape }}"{% endif %}
+          {% if field.settings.max != blank %}max="{{ field.settings.max | escape }}"{% endif %}
+          step="{{ field.settings.step | default: 'any' | escape }}"
+        {% endif %}
+        {% if field.required %}aria-required="true"{% endif %}
+        aria-describedby="{{ describedby }}{% if max_length > 0 %} {{ fid }}-count{% endif %}"
+      >
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+      {%- endif -%}
+    </div>
+    {%- if max_length > 0 -%}
+      <span class="shine-count" id="{{ fid }}-count" data-shine-count>
+        {%- liquid
+          assign shine_counter = 'shine.counter' | t | replace: '{used}', '0' | replace: '{max}', max_length
+          echo shine_counter | escape
+        -%}
+      </span>
+    {%- endif -%}
+
+  {%- when 'textarea' -%}
+    <textarea
+      class="shine-input shine-textarea"
+      id="{{ fid }}"
+      form="shine-none"
+      data-shine-input
+      rows="{{ field.settings.maxLines | default: 3 | at_most: 6 | escape }}"
+      {% if placeholder != blank %}placeholder="{{ placeholder }}"{% endif %}
+      {% if max_length > 0 %}maxlength="{{ max_length | escape }}"{% endif %}
+      {% if field.required %}aria-required="true"{% endif %}
+      aria-describedby="{{ describedby }}{% if max_length > 0 %} {{ fid }}-count{% endif %}"
+    ></textarea>
+    <div class="shine-row shine-row--end">
+      {%- if max_length > 0 -%}
+        <span class="shine-count" id="{{ fid }}-count" data-shine-count>
+          {%- liquid
+          assign shine_counter = 'shine.counter' | t | replace: '{used}', '0' | replace: '{max}', max_length
+          echo shine_counter | escape
+        -%}
+        </span>
+      {%- endif -%}
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+      {%- endif -%}
+    </div>
+
+  {%- when 'dropdown' -%}
+    <div class="shine-select-wrap">
+      <select
+        class="shine-input shine-select"
+        id="{{ fid }}"
+        form="shine-none"
+        data-shine-input
+        {% if field.required %}aria-required="true"{% endif %}
+        aria-describedby="{{ describedby }}"
+      >
+        <option value="">{{ 'shine.choose' | t }}</option>
+        {%- for value in field.values -%}
+          {%- capture vlabel -%}{%- render 'shine-t', value: value.label, locale: locale, fallback: fallback -%}{%- endcapture -%}
+          {%- liquid
+            assign vprice = value.price | default: 0
+            assign ptext = ''
+            if vprice > 0
+              capture ptext
+                render 'shine-price', amount: vprice, kind: value.priceType, base_cents: base_cents, same_currency: same_currency, plain: true
+              endcapture
+            endif
+          -%}
+          <option
+            value="{{ value.id | escape }}"
+            data-label="{{ vlabel }}"
+            {% if vprice > 0 %}data-amount="{{ vprice | escape }}" data-kind="{{ value.priceType | default: 'fixed' | escape }}"{% endif %}
+            {% if value.default %}selected{% endif %}
+          >
+            {{- vlabel -}}{%- if ptext != blank %} ({{ ptext }}){% endif -%}
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+
+  {%- when 'checkbox', 'toggle' -%}
+    <label class="shine-check{% if type == 'toggle' %} shine-check--switch{% endif %}" for="{{ fid }}">
+      <input
+        type="checkbox"
+        id="{{ fid }}"
+        form="shine-none"
+        data-shine-input
+        {% if type == 'toggle' %}role="switch"{% endif %}
+        {% if field.settings.defaultOn %}checked{% endif %}
+        aria-describedby="{{ describedby }}"
+      >
+      <span class="shine-check__box" aria-hidden="true"></span>
+      <span class="shine-check__text">{{ label }}{{ required_mark }}</span>
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+      {%- endif -%}
+    </label>
+
+  {%- when 'radio', 'checkbox_group', 'buttons', 'color_swatch', 'image_swatch', 'font_picker', 'product_list' -%}
+    {%- capture font_chars -%}abcdefghijklmnopqrstuvwxyz0123456789 ,-'"{%- endcapture -%}
+    <div class="shine-choices shine-choices--{{ type | escape }}{% if type == 'font_picker' %} shine-choices--buttons{% endif %}">
+      {%- for value in field.values -%}
+        {%- capture vlabel -%}{%- render 'shine-t', value: value.label, locale: locale, fallback: fallback -%}{%- endcapture -%}
+        {%- liquid
+          assign vprice = value.price | default: 0
+          assign safe_hex = ''
+          if type == 'color_swatch'
+            assign hex = value.color | default: '' | strip | downcase
+            assign hex_first = hex | slice: 0
+            assign hex_rest = hex | remove_first: '#' | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: 'a' | remove: 'b' | remove: 'c' | remove: 'd' | remove: 'e' | remove: 'f'
+            assign hex_size = hex | size
+            if hex_first == '#' and hex_rest == blank
+              case hex_size
+                when 4, 7, 9
+                  assign safe_hex = hex
+              endcase
+            endif
+          endif
+
+          comment
+            Font stacks are rendered only when every character is a letter, digit, space, comma, hyphen or quote.
+          endcomment
+          assign safe_font = ''
+          if type == 'font_picker' and value.font != blank
+            assign font_ok = true
+            assign font_list = value.font | downcase | split: ''
+            for c in font_list
+              unless font_chars contains c
+                assign font_ok = false
+                break
+              endunless
+            endfor
+            if font_ok
+              assign safe_font = value.font
+            endif
+          endif
+        -%}
+        <label class="shine-choice" for="{{ fid }}-{{ forloop.index }}"{% if type == 'color_swatch' or type == 'image_swatch' %} title="{{ vlabel }}"{% endif %}>
+          <input
+            type="{{ input_type }}"
+            id="{{ fid }}-{{ forloop.index }}"
+            name="{{ fid }}"
+            form="shine-none"
+            value="{{ value.id | escape }}"
+            data-shine-value
+            data-label="{{ vlabel }}"
+            {% if type == 'image_swatch' and value.image != blank %}data-image="{{ value.image | escape }}"{% endif %}
+            {% if value.default %}checked{% endif %}
+            {% if forloop.first %}aria-describedby="{{ describedby }}"{% endif %}
+          >
+          {%- case type -%}
+            {%- when 'color_swatch' -%}
+              <span class="shine-swatch"{% if safe_hex != blank %} style="--shine-color: {{ safe_hex }}"{% endif %} aria-hidden="true"></span>
+              <span class="shine-choice__text shine-vh">{{ vlabel }}</span>
+            {%- when 'image_swatch' -%}
+              <span class="shine-swatch shine-swatch--image" aria-hidden="true">
+                {%- if value.image != blank -%}
+                  <img src="{{ value.image | escape }}" alt="" loading="lazy" width="64" height="64">
+                {%- endif -%}
+              </span>
+              <span class="shine-choice__text shine-vh">{{ vlabel }}</span>
+            {%- when 'font_picker' -%}
+              <span class="shine-choice__text"{% if safe_font != blank %} style="font-family: {{ safe_font | escape }}"{% endif %}>{{ vlabel }}</span>
+            {%- when 'product_list' -%}
+              <span class="shine-product__img" aria-hidden="true">
+                {%- if value.image != blank -%}
+                  <img src="{{ value.image | escape }}" alt="" loading="lazy" width="56" height="56">
+                {%- endif -%}
+              </span>
+              <span class="shine-choice__text">{{ vlabel }}</span>
+            {%- else -%}
+              <span class="shine-choice__text">{{ vlabel }}</span>
+          {%- endcase -%}
+          {%- if vprice > 0 -%}
+            {%- render 'shine-price', amount: vprice, kind: value.priceType, base_cents: base_cents, same_currency: same_currency -%}
+          {%- endif -%}
+        </label>
+      {%- endfor -%}
+    </div>
+
+  {%- when 'range' -%}
+    {%- liquid
+      assign r_min = field.settings.min | default: 0
+      assign r_max = field.settings.max | default: 100
+      assign r_step = field.settings.step | default: 1
+      assign r_start = r_min
+      if field.settings.default != blank
+        assign r_start = field.settings.default
+      endif
+    -%}
+    <div class="shine-row shine-range">
+      <input
+        class="shine-range__input"
+        type="range"
+        id="{{ fid }}"
+        form="shine-none"
+        data-shine-input
+        min="{{ r_min | escape }}"
+        max="{{ r_max | escape }}"
+        step="{{ r_step | escape }}"
+        value="{{ r_start | escape }}"
+        aria-valuetext="{{ r_start | escape }}{% if unit != blank %} {{ unit | escape }}{% endif %}"
+        aria-describedby="{{ describedby }}"
+      >
+      <output class="shine-range__value" for="{{ fid }}" data-shine-range-value>
+        {{- r_start | escape }}{% if unit != blank %} {{ unit | escape }}{% endif -%}
+      </output>
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+      {%- endif -%}
+    </div>
+
+  {%- when 'dimension' -%}
+    <div class="shine-row shine-dimension">
+      <span class="shine-dimension__part">
+        <span class="shine-dimension__label" id="{{ fid }}-wl">{{ 'shine.width' | t }}</span>
+        <input
+          class="shine-input"
+          type="number"
+          inputmode="decimal"
+          id="{{ fid }}"
+          form="shine-none"
+          data-shine-dim="w"
+          step="any"
+          {% if field.settings.minWidth != blank %}min="{{ field.settings.minWidth | escape }}"{% endif %}
+          {% if field.settings.maxWidth != blank %}max="{{ field.settings.maxWidth | escape }}"{% endif %}
+          {% if field.required %}aria-required="true"{% endif %}
+          aria-labelledby="{{ fid }}-label {{ fid }}-wl"
+          aria-describedby="{{ describedby }}"
+        >
+      </span>
+      <span class="shine-dimension__x" aria-hidden="true">&times;</span>
+      <span class="shine-dimension__part">
+        <span class="shine-dimension__label" id="{{ fid }}-hl">{{ 'shine.height' | t }}</span>
+        <input
+          class="shine-input"
+          type="number"
+          inputmode="decimal"
+          id="{{ fid }}-h"
+          form="shine-none"
+          data-shine-dim="h"
+          step="any"
+          {% if field.settings.minHeight != blank %}min="{{ field.settings.minHeight | escape }}"{% endif %}
+          {% if field.settings.maxHeight != blank %}max="{{ field.settings.maxHeight | escape }}"{% endif %}
+          {% if field.required %}aria-required="true"{% endif %}
+          aria-labelledby="{{ fid }}-label {{ fid }}-hl"
+          aria-describedby="{{ describedby }}"
+        >
+      </span>
+      {%- if unit != blank -%}
+        <span class="shine-dimension__unit">{{ unit | escape }}</span>
+      {%- endif -%}
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency, unit: unit -%}
+      {%- endif -%}
+    </div>
+
+  {%- when 'time' -%}
+    {%- liquid
+      assign t_start = field.settings.start | default: '09:00' | split: ':'
+      assign t_end = field.settings.end | default: '17:00' | split: ':'
+      assign t_from = t_start[0] | times: 60 | plus: t_start[1]
+      assign t_to = t_end[0] | times: 60 | plus: t_end[1]
+      assign t_step = field.settings.interval | default: 30 | at_least: 5
+    -%}
+    <div class="shine-row">
+      <div class="shine-select-wrap shine-grow">
+        <select
+          class="shine-input shine-select"
+          id="{{ fid }}"
+          form="shine-none"
+          data-shine-input
+          {% if field.required %}aria-required="true"{% endif %}
+          aria-describedby="{{ describedby }}"
+        >
+          <option value="">{{ 'shine.time_choose' | t }}</option>
+          {%- for i in (0..287) -%}
+            {%- liquid
+              assign t_m = i | times: t_step | plus: t_from
+              if t_m > t_to
+                break
+              endif
+              assign t_h = t_m | divided_by: 60 | prepend: '0' | slice: -2, 2
+              assign t_mm = t_m | modulo: 60 | prepend: '0' | slice: -2, 2
+            -%}
+            <option value="{{ t_h }}:{{ t_mm }}">{{ t_h }}:{{ t_mm }}</option>
+          {%- endfor -%}
+        </select>
+      </div>
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+      {%- endif -%}
+    </div>
+
+  {%- when 'color_picker' -%}
+    <div class="shine-row shine-color">
+      <input
+        class="shine-color__swatch"
+        type="color"
+        id="{{ fid }}"
+        form="shine-none"
+        data-shine-color
+        value="{{ safe_default_hex | default: '#000000' }}"
+        aria-describedby="{{ describedby }}"
+      >
+      <input
+        class="shine-input shine-color__hex"
+        type="text"
+        form="shine-none"
+        data-shine-input
+        value="{{ safe_default_hex }}"
+        placeholder="#000000"
+        maxlength="7"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="{{ label }} ({{ 'shine.color_hex' | t }})"
+        aria-describedby="{{ describedby }}"
+      >
+      {%- if price_amount > 0 -%}
+        {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+      {%- endif -%}
+    </div>
+
+  {%- when 'date' -%}
+    <div class="shine-date">
+      <button
+        type="button"
+        class="shine-input shine-date__toggle"
+        id="{{ fid }}"
+        data-shine-date-toggle
+        aria-expanded="false"
+        aria-controls="{{ fid }}-cal"
+        aria-labelledby="{{ fid }}-label {{ fid }}"
+        aria-describedby="{{ describedby }} {{ fid }}-note"
+      >
+        <span data-shine-date-value>{{ 'shine.date_choose' | t }}</span>
+        {%- if price_amount > 0 -%}
+          {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+        {%- endif -%}
+      </button>
+      <div class="shine-cal" id="{{ fid }}-cal" data-shine-calendar hidden></div>
+    </div>
+    <p class="shine-note" id="{{ fid }}-note" data-shine-date-note></p>
+
+  {%- when 'file' -%}
+    {%- liquid
+      assign default_types = 'jpg,png,pdf' | split: ','
+      assign types = field.settings.fileTypes | default: default_types
+      assign accept = ''
+      for ft in types
+        case ft
+          when 'jpg', 'jpeg'
+            assign accept = accept | append: '.jpg,.jpeg,image/jpeg,'
+          when 'png'
+            assign accept = accept | append: '.png,image/png,'
+          when 'pdf'
+            assign accept = accept | append: '.pdf,application/pdf,'
+        endcase
+      endfor
+      assign or_word = 'shine.or' | t
+      capture types_text
+        for ft in types
+          if forloop.last and forloop.length > 1
+            echo ' ' | append: or_word | append: ' '
+          elsif forloop.first == false
+            echo ', '
+          endif
+          echo ft | upcase | escape
+        endfor
+      endcapture
+      assign size_text = max_mb | append: ' MB'
+      assign field_max = field.settings.maxFiles | default: 1
+      if plan_max_files > 0 and plan_max_files < field_max
+        assign field_max = plan_max_files
+      endif
+    -%}
+    <div class="shine-upload" data-shine-upload>
+      <input
+        type="file"
+        class="shine-upload__input"
+        id="{{ fid }}"
+        form="shine-none"
+        accept="{{ accept | escape }}"
+        {% if field_max > 1 %}multiple{% endif %}
+        aria-describedby="{{ fid }}-hint {{ describedby }}"
+      >
+      <label class="shine-upload__drop" for="{{ fid }}" data-shine-drop>
+        <span>{{ 'shine.upload_drop' | t }}</span>
+        {%- if price_amount > 0 -%}
+          {%- render 'shine-price', amount: price_amount, kind: price_kind, base_cents: base_cents, same_currency: same_currency -%}
+        {%- endif -%}
+      </label>
+      <p class="shine-help" id="{{ fid }}-hint">
+        {%- liquid
+          assign shine_hint = 'shine.upload_hint' | t | replace: '{types}', types_text | replace: '{size}', size_text
+          echo shine_hint | escape
+        -%}
+      </p>
+      <ul class="shine-upload__list" data-shine-files></ul>
+      <p class="shine-upload__status" data-shine-upload-status aria-live="polite"></p>
+    </div>
+{%- endcase -%}
+
+{%- if help != blank -%}
+  <p class="shine-help" id="{{ fid }}-help">{{ help }}</p>
+{%- endif -%}
+<p class="shine-error" id="{{ fid }}-error" data-shine-error aria-live="polite"></p>
+{%- if group -%}
+  </fieldset>
+{%- else -%}
+  </div>
+{%- endif -%}

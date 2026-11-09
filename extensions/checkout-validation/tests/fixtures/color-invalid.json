@@ -1,0 +1,66 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "shop": {
+        "localTime": {
+          "date": "2026-11-06"
+        }
+      },
+      "validation": {
+        "config": null
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "selection": {
+              "value": "{\"s\":\"set_col\",\"v\":1,\"a\":{\"c\":\"blue\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Custom Tote",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_col",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "c",
+                        "type": "color_picker",
+                        "label": "Thread color"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Custom Tote needs a valid Thread color. Go back to the product page to fix it.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

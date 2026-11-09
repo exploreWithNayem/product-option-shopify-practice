@@ -1,0 +1,136 @@
+{
+  "payload": {
+    "export": "cart-transform-run",
+    "target": "cart.transform.run",
+    "input": {
+      "presentmentCurrencyRate": "1.0",
+      "cartTransform": {
+        "config": {
+          "jsonValue": {
+            "addonVariantId": "gid://shopify/ProductVariant/999",
+            "pricingPaused": false
+          }
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 1,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "30.0",
+                "currencyCode": "USD"
+              }
+            },
+            "selection": {
+              "value": "{\"s\":\"set_mix\",\"v\":3,\"a\":{\"pl\":\"box\",\"wrap\":true}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_mix",
+                    "v": 3,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "pl",
+                        "type": "product_list",
+                        "label": "Box",
+                        "values": [
+                          {
+                            "id": "box",
+                            "label": "Gift box",
+                            "variantId": "gid://shopify/ProductVariant/11",
+                            "price": 6
+                          }
+                        ]
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "lineExpand": {
+            "cartLineId": "gid://shopify/CartLine/1",
+            "expandedCartItems": [
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/1",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "30.00"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Box",
+                    "value": "Gift box"
+                  },
+                  {
+                    "key": "Gift wrap",
+                    "value": "Yes"
+                  },
+                  {
+                    "key": "_shine_options",
+                    "value": "{\"s\":\"set_mix\",\"v\":3,\"a\":{\"pl\":\"box\",\"wrap\":true}}"
+                  }
+                ]
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/11",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "6.00"
+                    }
+                  }
+                }
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/999",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "5.00"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Add-ons",
+                    "value": "Gift wrap +5.00 (USD)"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

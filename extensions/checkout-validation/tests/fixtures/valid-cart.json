@@ -1,0 +1,150 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "shop": {
+        "localTime": {
+          "date": "2026-11-06"
+        }
+      },
+      "validation": {
+        "config": null
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "selection": {
+              "value": "{\"s\":\"set_tux\",\"v\":2,\"a\":{\"mono\":\"AB\",\"wrap\":true}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/2",
+            "selection": {
+              "value": "{\"s\":\"set_bak\",\"v\":4,\"a\":{\"f_date\":\"2026-11-10\",\"f_flavor\":\"v_choc\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "product": {
+                "id": "gid://shopify/Product/2",
+                "title": "Birthday cake",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_bak",
+                    "v": 4,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "f_date",
+                        "type": "date",
+                        "label": "Delivery date",
+                        "required": true,
+                        "settings": {
+                          "leadDays": 2,
+                          "maxDaysAhead": 60,
+                          "weekdays": [
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                          ]
+                        }
+                      },
+                      {
+                        "id": "f_flavor",
+                        "type": "dropdown",
+                        "label": "Flavor",
+                        "required": true,
+                        "values": [
+                          {
+                            "id": "v_vanilla",
+                            "label": "Vanilla"
+                          },
+                          {
+                            "id": "v_choc",
+                            "label": "Chocolate"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/3",
+            "selection": null,
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/3",
+              "product": {
+                "id": "gid://shopify/Product/3",
+                "title": "Pocket square",
+                "pricing": null
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": []
+          }
+        }
+      ]
+    }
+  }
+}

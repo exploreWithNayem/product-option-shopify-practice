@@ -1,0 +1,137 @@
+{
+  "payload": {
+    "export": "cart-transform-run",
+    "target": "cart.transform.run",
+    "input": {
+      "presentmentCurrencyRate": "1.0",
+      "cartTransform": {
+        "config": {
+          "jsonValue": {
+            "addonVariantId": "gid://shopify/ProductVariant/999",
+            "pricingPaused": false
+          }
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 3,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "199.99",
+                "currencyCode": "USD"
+              }
+            },
+            "selection": {
+              "value": "{\"s\":\"set_war\",\"v\":1,\"a\":{\"f_warranty\":\"v_2y\",\"f_install\":true}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/3",
+              "product": {
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_war",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "f_warranty",
+                        "type": "radio",
+                        "label": "Warranty",
+                        "required": true,
+                        "values": [
+                          {
+                            "id": "v_1y",
+                            "label": "1 year (included)"
+                          },
+                          {
+                            "id": "v_2y",
+                            "label": "2 years",
+                            "price": 10,
+                            "priceType": "percent"
+                          },
+                          {
+                            "id": "v_3y",
+                            "label": "3 years",
+                            "price": 15,
+                            "priceType": "percent"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "f_install",
+                        "type": "checkbox",
+                        "label": "Professional installation",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 49
+                        },
+                        "scope": "line"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "lineExpand": {
+            "cartLineId": "gid://shopify/CartLine/1",
+            "expandedCartItems": [
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/3",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "199.99"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Warranty",
+                    "value": "2 years"
+                  },
+                  {
+                    "key": "Professional installation",
+                    "value": "Yes"
+                  },
+                  {
+                    "key": "_shine_options",
+                    "value": "{\"s\":\"set_war\",\"v\":1,\"a\":{\"f_warranty\":\"v_2y\",\"f_install\":true}}"
+                  }
+                ]
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/999",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "36.34"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Add-ons",
+                    "value": "Warranty: 2 years +20.00, Professional installation +49.00 once per line (USD)"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

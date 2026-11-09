@@ -1,0 +1,126 @@
+{
+  "payload": {
+    "export": "cart-transform-run",
+    "target": "cart.transform.run",
+    "input": {
+      "presentmentCurrencyRate": "1.0",
+      "cartTransform": {
+        "config": {
+          "jsonValue": {
+            "addonVariantId": "gid://shopify/ProductVariant/999",
+            "pricingPaused": false
+          }
+        }
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 2,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "40.0",
+                "currencyCode": "USD"
+              }
+            },
+            "selection": {
+              "value": "{\"s\":\"set_gift\",\"v\":1,\"a\":{\"pl\":[\"box\",\"card\"]}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_gift",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "pl",
+                        "type": "product_list",
+                        "label": "Add a gift box",
+                        "settings": {
+                          "multiple": true
+                        },
+                        "values": [
+                          {
+                            "id": "box",
+                            "label": "Gift box",
+                            "variantId": "gid://shopify/ProductVariant/11",
+                            "price": 6
+                          },
+                          {
+                            "id": "card",
+                            "label": "Card",
+                            "variantId": "gid://shopify/ProductVariant/12",
+                            "price": 2.5
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "lineExpand": {
+            "cartLineId": "gid://shopify/CartLine/1",
+            "expandedCartItems": [
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/1",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "40.00"
+                    }
+                  }
+                },
+                "attributes": [
+                  {
+                    "key": "Add a gift box",
+                    "value": "Gift box, Card"
+                  },
+                  {
+                    "key": "_shine_options",
+                    "value": "{\"s\":\"set_gift\",\"v\":1,\"a\":{\"pl\":[\"box\",\"card\"]}}"
+                  }
+                ]
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/11",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "6.00"
+                    }
+                  }
+                }
+              },
+              {
+                "merchandiseId": "gid://shopify/ProductVariant/12",
+                "quantity": 1,
+                "price": {
+                  "adjustment": {
+                    "fixedPricePerUnit": {
+                      "amount": "2.50"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

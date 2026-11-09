@@ -1,0 +1,72 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "shop": {
+        "localTime": {
+          "date": "2026-11-06"
+        }
+      },
+      "validation": {
+        "config": null
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "selection": {
+              "value": "{\"s\":\"set_time\",\"v\":1,\"a\":{\"t\":\"09:15\"}}"
+            },
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Birthday Cake",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_time",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "t",
+                        "type": "time",
+                        "label": "Pickup time",
+                        "required": true,
+                        "settings": {
+                          "start": "09:00",
+                          "end": "12:00",
+                          "interval": 30
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Birthday Cake needs a valid Pickup time. Go back to the product page to fix it.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

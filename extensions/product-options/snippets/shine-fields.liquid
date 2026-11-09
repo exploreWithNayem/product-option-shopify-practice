@@ -1,0 +1,167 @@
+{%- doc -%}
+  Renders a product's Shine Options set from the app-owned metafield
+  product.metafields['$app'].options, at first paint, plus the data the
+  storefront script needs (escaped JSON in data-shine).
+
+  @param {product} product - The product
+  @param {string} uid - Unique id prefix for this rendering
+  @param {string} [mode] - block or fallback
+  @param {string} [accent] - Accent color
+  @param {number} [swatch_size] - Swatch size in px
+  @param {boolean} [show_total] - Show the live total on the add-to-cart button
+
+  @example
+  {% render 'shine-fields', product: product, uid: block.id, mode: 'block' %}
+{%- enddoc -%}
+{%- liquid
+  assign set = product.metafields['$app'].options.value
+  assign config = shop.metafields['$app'].config.value
+  assign locale = request.locale.iso_code
+  assign fallback = set.defaultLocale | default: locale
+  assign variant = product.selected_or_first_available_variant
+  assign base_cents = variant.price | default: 0
+  assign same_currency = false
+  if cart.currency.iso_code == shop.currency
+    assign same_currency = true
+  endif
+  assign max_mb = config.maxUploadMb | default: 5
+  assign plan_max_files = config.maxFiles | default: 0
+  assign show_total_value = true
+  if show_total == false
+    assign show_total_value = false
+  endif
+-%}
+{%- if set != blank and set.fields.size > 0 -%}
+  {%- capture shine_json -%}
+    {
+      "set": {{ set | json }},
+      "config": {{ config | json }},
+      "productId": {{ product.id | json }},
+      "variantId": {{ variant.id | json }},
+      "variants": {
+        {%- for v in product.variants -%}
+          "{{ v.id }}": {{ v.price | json }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      },
+      "currency": {{ cart.currency.iso_code | json }},
+      "shopCurrency": {{ shop.currency | json }},
+      "locale": {{ locale | json }},
+      "today": {{ 'now' | date: '%Y-%m-%d' | json }},
+      "mode": {{ mode | default: 'block' | json }},
+      "showTotal": {{ show_total_value | json }},
+      "strings": {
+        "price": {{ 'shine.price' | t | json }},
+        "per_char": {{ 'shine.per_char' | t | json }},
+        "per_unit": {{ 'shine.per_unit' | t | json }},
+        "add_to_cart": {{ 'shine.add_to_cart' | t | json }},
+        "counter": {{ 'shine.counter' | t | json }},
+        "required": {{ 'shine.required' | t | json }},
+        "charset_letters": {{ 'shine.charset_letters' | t | json }},
+        "charset_numbers": {{ 'shine.charset_numbers' | t | json }},
+        "charset_alphanumeric": {{ 'shine.charset_alphanumeric' | t | json }},
+        "min_length": {{ 'shine.min_length' | t | json }},
+        "max_length": {{ 'shine.max_length' | t | json }},
+        "max_lines": {{ 'shine.max_lines' | t | json }},
+        "min_value": {{ 'shine.min_value' | t | json }},
+        "max_value": {{ 'shine.max_value' | t | json }},
+        "step": {{ 'shine.step' | t | json }},
+        "min_select": {{ 'shine.min_select' | t | json }},
+        "max_select": {{ 'shine.max_select' | t | json }},
+        "invalid_value": {{ 'shine.invalid_value' | t | json }},
+        "format_email": {{ 'shine.format_email' | t | json }},
+        "format_phone": {{ 'shine.format_phone' | t | json }},
+        "date_unavailable": {{ 'shine.date_unavailable' | t | json }},
+        "date_note": {{ 'shine.date_note' | t | json }},
+        "date_choose": {{ 'shine.date_choose' | t | json }},
+        "date_prev": {{ 'shine.date_prev' | t | json }},
+        "date_next": {{ 'shine.date_next' | t | json }},
+        "max_files": {{ 'shine.max_files' | t | json }},
+        "upload_too_large": {{ 'shine.upload_too_large' | t | json }},
+        "upload_wrong_type": {{ 'shine.upload_wrong_type' | t | json }},
+        "upload_failed": {{ 'shine.upload_failed' | t | json }},
+        "upload_progress": {{ 'shine.upload_progress' | t | json }},
+        "upload_done": {{ 'shine.upload_done' | t | json }},
+        "upload_wait": {{ 'shine.upload_wait' | t | json }},
+        "upload_remove": {{ 'shine.upload_remove' | t | json }},
+        "upload_retry": {{ 'shine.upload_retry' | t | json }},
+        "subscription": {{ 'shine.subscription' | t | json }},
+        "errors": {{ 'shine.errors' | t | json }},
+        "yes": {{ 'shine.yes' | t | json }},
+        "or": {{ 'shine.or' | t | json }},
+        "per_area": {{ 'shine.per_area' | t | json }},
+        "dimension_invalid": {{ 'shine.dimension_invalid' | t | json }},
+        "min_width": {{ 'shine.min_width' | t | json }},
+        "max_width": {{ 'shine.max_width' | t | json }},
+        "min_height": {{ 'shine.min_height' | t | json }},
+        "max_height": {{ 'shine.max_height' | t | json }},
+        "time_unavailable": {{ 'shine.time_unavailable' | t | json }},
+        "color_invalid": {{ 'shine.color_invalid' | t | json }}
+      }
+    }
+  {%- endcapture -%}
+  {%- capture shine_style -%}
+    {%- if accent != blank -%}--shine-accent: {{ accent }};{%- endif -%}
+    {%- if swatch_size != blank -%}--shine-swatch: {{ swatch_size | at_least: 28 | at_most: 64 }}px;{%- endif -%}
+  {%- endcapture -%}
+  <div
+    class="shine-options"
+    data-shine-root
+    data-shine="{{ shine_json | strip | escape }}"
+    {% if shine_style != blank %}style="{{ shine_style | escape }}"{% endif %}
+  >
+    <p class="shine-notice" data-shine-subscription hidden>{{ 'shine.subscription' | t }}</p>
+    {%- comment -%}
+      Option groups wrap the entries after them, up to the next group. Once the first
+      group starts, every later entry belongs to a group, so the outer loop skips them.
+    {%- endcomment -%}
+    {%- assign shine_grouped = false -%}
+    {%- for field in set.fields -%}
+      {%- if field.type == 'group' -%}
+        {%- assign shine_grouped = true -%}
+        {%- liquid
+          assign g_hidden = false
+          if field.condition.rules.size > 0 and field.condition.action != 'hide'
+            assign g_hidden = true
+          endif
+          assign g_next = forloop.index
+        -%}
+        <details class="shine-group" data-shine-field="{{ field.id | escape }}"{% unless field.settings.collapsed %} open{% endunless %}{% if g_hidden %} hidden{% endif %}>
+          <summary class="shine-group__title">
+            {%- render 'shine-t', value: field.label, locale: locale, fallback: fallback -%}
+          </summary>
+          <div class="shine-group__body">
+            {%- for child in set.fields offset: g_next -%}
+              {%- if child.type == 'group' -%}{%- break -%}{%- endif -%}
+              {%- render 'shine-item',
+                field: child,
+                uid: uid,
+                locale: locale,
+                fallback: fallback,
+                base_cents: base_cents,
+                same_currency: same_currency,
+                max_mb: max_mb,
+                plan_max_files: plan_max_files
+              -%}
+            {%- endfor -%}
+          </div>
+        </details>
+        {%- continue -%}
+      {%- endif -%}
+      {%- if shine_grouped -%}{%- continue -%}{%- endif -%}
+      {%- render 'shine-item',
+        field: field,
+        uid: uid,
+        locale: locale,
+        fallback: fallback,
+        base_cents: base_cents,
+        same_currency: same_currency,
+        max_mb: max_mb,
+        plan_max_files: plan_max_files
+      -%}
+    {%- endfor -%}
+    <p class="shine-vh" data-shine-live aria-live="assertive"></p>
+  </div>
+  {%- unless mode == 'fallback' -%}
+    {%- render 'shine-scripts', set: set -%}
+  {%- endunless -%}
+{%- endif -%}

@@ -1,0 +1,71 @@
+{%- liquid
+  assign shine_on_product = false
+  if template.name == 'product' and product != blank
+    assign shine_set = product.metafields['$app'].options.value
+    if shine_set != blank
+      assign shine_on_product = true
+    endif
+  endif
+
+  assign shine_list = nil
+  if template.name == 'collection' and collection != blank
+    assign shine_list = collection.products
+  elsif template.name == 'search' and search.performed
+    assign shine_list = search.results
+  endif
+-%}
+{%- if shine_on_product -%}
+  <template data-shine-fallback>
+    {%- render 'shine-fields', product: product, uid: 'shine-fb', mode: 'fallback' -%}
+  </template>
+  {%- render 'shine-scripts', set: shine_set -%}
+{%- endif -%}
+{%- if shine_list != blank -%}
+  {%- capture shine_map -%}
+    {%- assign shine_first = true -%}
+    {
+    {%- for item in shine_list limit: 50 -%}
+      {%- liquid
+        assign is_product = true
+        if template.name == 'search' and item.object_type != 'product'
+          assign is_product = false
+        endif
+      -%}
+      {%- if is_product -%}
+        {%- liquid
+          assign item_set = item.metafields['$app'].options.value
+          assign needs_options = false
+          if item_set != blank
+            for f in item_set.fields
+              if f.required and f.condition.rules.size == 0
+                assign needs_options = true
+                break
+              endif
+            endfor
+          endif
+        -%}
+        {%- if needs_options -%}
+          {%- for v in item.variants -%}
+            {%- unless shine_first %},{% endunless -%}
+            "{{ v.id }}": {{ item.url | json }}
+            {%- assign shine_first = false -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    }
+  {%- endcapture -%}
+  {%- unless shine_first -%}
+    <div hidden data-shine-quickadd="{{ shine_map | strip | escape }}"></div>
+  {%- endunless -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:embed.name",
+  "target": "body",
+  "javascript": "shine-options.js",
+  "stylesheet": "shine-options.css",
+  "settings": []
+}
+{% endschema %}

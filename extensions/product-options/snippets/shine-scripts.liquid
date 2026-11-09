@@ -1,0 +1,34 @@
+{%- doc -%}
+  Deferred storefront scripts for a product's option set. The date picker, the
+  upload widget and the design layer load only when the set uses them, before the
+  main product script.
+
+  @param {object} set - The option set (product.metafields['$app'].options.value)
+
+  @example
+  {% render 'shine-scripts', set: product.metafields['$app'].options.value %}
+{%- enddoc -%}
+{%- liquid
+  assign has_date = false
+  assign has_file = false
+  assign has_layer = false
+  for field in set.fields
+    if field.type == 'date'
+      assign has_date = true
+    elsif field.type == 'file'
+      assign has_file = true
+    elsif field.type == 'design_layer'
+      assign has_layer = true
+    endif
+  endfor
+-%}
+{%- if has_date -%}
+  <script src="{{ 'shine-options-date.js' | asset_url }}" defer></script>
+{%- endif -%}
+{%- if has_file -%}
+  <script src="{{ 'shine-options-upload.js' | asset_url }}" defer></script>
+{%- endif -%}
+{%- if has_layer -%}
+  <script src="{{ 'shine-options-layer.js' | asset_url }}" defer></script>
+{%- endif -%}
+<script src="{{ 'shine-options-product.js' | asset_url }}" defer></script>

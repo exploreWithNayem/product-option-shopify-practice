@@ -1,0 +1,46 @@
+{%- doc -%}
+  Price tag beside a priced choice ("+$5.00"). Fixed prices are stored in the shop
+  currency; when the shopper sees another currency the text is left empty and the
+  storefront script fills it with the converted amount.
+
+  @param {number} amount - Price amount (decimal, shop currency) or percent
+  @param {string} [kind] - fixed, percent, per_char, per_unit or per_area
+  @param {string} [unit] - Unit for per_area prices (cm, in, m)
+  @param {number} base_cents - Selected variant price in presentment cents
+  @param {boolean} same_currency - Shopper currency equals shop currency
+  @param {boolean} [plain] - Output text only, for option elements
+
+  @example
+  {% render 'shine-price', amount: 5, kind: 'fixed', base_cents: 7000, same_currency: true %}
+{%- enddoc -%}
+{%- liquid
+  assign shine_kind = kind | default: 'fixed'
+  assign shine_cents = nil
+  if shine_kind == 'percent'
+    assign shine_cents = base_cents | times: amount | divided_by: 100.0 | round
+  elsif same_currency
+    assign shine_cents = amount | times: 100 | round
+  endif
+  assign shine_text = ''
+  if shine_cents != nil
+    assign shine_money = shine_cents | money | strip_html
+    case shine_kind
+      when 'per_char'
+        assign shine_template = 'shine.per_char' | t
+      when 'per_unit'
+        assign shine_template = 'shine.per_unit' | t
+      when 'per_area'
+        assign shine_template = 'shine.per_area' | t | replace: '{unit}', unit
+      else
+        assign shine_template = 'shine.price' | t
+    endcase
+    assign shine_text = shine_template | replace: '{price}', shine_money
+  endif
+-%}
+{%- if plain -%}
+  {{- shine_text | escape -}}
+{%- else -%}
+  <span class="shine-price" data-shine-price data-kind="{{ shine_kind | escape }}" data-amount="{{ amount | escape }}"{% if unit != blank %} data-unit="{{ unit | escape }}"{% endif %}>
+    {{- shine_text | escape -}}
+  </span>
+{%- endif -%}

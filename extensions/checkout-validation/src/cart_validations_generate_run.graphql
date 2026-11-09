@@ -1,0 +1,41 @@
+query CartValidationsGenerateRunInput {
+  buyerJourney {
+    step
+  }
+  shop {
+    localTime {
+      date
+    }
+  }
+  validation {
+    config: metafield(namespace: "$app", key: "config") {
+      jsonValue
+    }
+  }
+  cart {
+    lines {
+      id
+      selection: attribute(key: "_shine_options") {
+        value
+      }
+      sellingPlanAllocation {
+        sellingPlan {
+          id
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          product {
+            id
+            title
+            pricing: metafield(namespace: "$app", key: "pricing") {
+              jsonValue
+            }
+          }
+        }
+      }
+    }
+  }
+}

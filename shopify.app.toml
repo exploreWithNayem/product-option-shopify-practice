@@ -1,0 +1,95 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "c2e28c8d67d3e2b34ef2e0490179fa9d"
+application_url = "https://example.com"
+embedded = true
+name = "shine-options"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+# write_products: option set metafields + the hidden add-on product
+# write_cart_transforms / write_validations: the two Functions
+# read_orders: add-on revenue analytics and upload-to-order links
+# read_themes: check that the app embed and app block are on
+# read_locales: label translations per store language
+# unauthenticated_*: the built-in cart test creates a Storefront API cart to confirm the add-on total
+# write_app_proxy: required because the app has an app proxy (file uploads)
+scopes = "write_products,write_cart_transforms,write_validations,read_orders,read_themes,read_locales,unauthenticated_read_product_listings,unauthenticated_write_checkouts,write_app_proxy"
+
+# Resolved option set for each assigned product (rendered by the theme app extension).
+[product.metafields.app.options]
+type = "json"
+name = "Product options"
+description = "Option set shown on this product page. Managed by the Shine Options app."
+
+  [product.metafields.app.options.access]
+  admin = "merchant_read"
+
+# Lean copy of the same set read by the Cart Transform and Validation Functions.
+[product.metafields.app.pricing]
+type = "json"
+name = "Product options pricing"
+description = "Add-on prices used at checkout. Managed by the Shine Options app."
+
+  [product.metafields.app.pricing.access]
+  admin = "merchant_read"
+
+# Storefront configuration: strings per language, plan limits, upload endpoint, flags.
+[shop.metafields.app.config]
+type = "json"
+name = "Product options settings"
+description = "Storefront settings for the Shine Options app."
+
+  [shop.metafields.app.config.access]
+  admin = "merchant_read"
+
+[app_proxy]
+url = "https://example.com/proxy"
+subpath = "shine-options"
+prefix = "apps"
+
+[webhooks]
+api_version = "2027-01"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/uninstalled"
+  topics = [ "app/uninstalled" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/scopes_update"
+  topics = [ "app/scopes_update" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/subscriptions"
+  topics = [ "app_subscriptions/update" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/products"
+  topics = [ "products/create", "products/update" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/collections"
+  topics = [ "collections/update" ]
+
+  # Order webhooks feed add-on analytics and the Free plan's monthly counter.
+  # They carry protected customer data, so Shopify only allows them after you request
+  # access (Partner Dashboard > Apps > shine-options > API access requests >
+  # Protected customer data access). Uncomment both once that's done.
+  # [[webhooks.subscriptions]]
+  # uri = "/webhooks/orders/create"
+  # topics = [ "orders/create" ]
+  #
+  # [[webhooks.subscriptions]]
+  # uri = "/webhooks/refunds/create"
+  # topics = [ "refunds/create" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/compliance"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true

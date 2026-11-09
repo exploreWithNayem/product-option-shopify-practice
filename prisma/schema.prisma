@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+// ---------------------------------------------------------------------------
+// Shine Options models. SQLite in development; switch the datasource to
+// "postgresql" for production (all JSON is stored as text for portability).
+// ---------------------------------------------------------------------------
+
+model ShopSettings {
+  shop                String    @id
+  plan                String    @default("free") // free | starter | growth | pro
+  primaryLocale       String    @default("en")
+  currency            String    @default("USD")
+  timezone            String?
+  // JSON: { strings: {locale: {key: text}}, discountsOnAddons, ... }
+  settings            String    @default("{}")
+  failureMode         String    @default("block") // block | allow (base price)
+  addonProductId      String?
+  addonVariantId      String?
+  cartTransformId     String?
+  validationId        String?
+  onboardingStep      Int       @default(0)
+  onboardingDone      Boolean   @default(false)
+  testPassedAt        DateTime?
+  usageMonth          String    @default("") // YYYY-MM
+  addonOrdersThisMonth Int      @default(0)
+  pricingPaused       Boolean   @default(false)
+  priceLockedPlan     String?
+  installedAt         DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model OptionSet {
+  id          String    @id @default(cuid())
+  shop        String
+  number      Int       @default(0) // short ID shown to merchants (6 digits, unique per shop)
+  name        String
+  status      String    @default("draft") // draft | active | archived
+  version     Int       @default(0) // last published version (0 = never published)
+  fields      String    @default("[]") // JSON Field[] (working copy)
+  rules       String    @default("{}") // JSON assignment rules
+  priority    Int       @default(0)
+  productCount Int      @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  versions    OptionSetVersion[]
+
+  @@index([shop, status])
+  @@index([shop, number])
+}
+
+model OptionSetVersion {
+  id          String    @id @default(cuid())
+  optionSetId String
+  version     Int
+  fields      String // JSON snapshot published to metafields
+  createdAt   DateTime  @default(now())
+  optionSet   OptionSet @relation(fields: [optionSetId], references: [id], onDelete: Cascade)
+
+  @@unique([optionSetId, version])
+}
+
+model Upload {
+  id          String    @id // random 128-bit id, also the capability in the file link
+  shop        String
+  storageKey  String
+  fileName    String
+  contentType String
+  size        Int
+  status      String    @default("pending") // pending | ready | rejected
+  productId   String?
+  fieldId     String?
+  orderId     String?
+  fulfilledAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([shop, createdAt])
+}
+
+model DailyStat {
+  id           String   @id @default(cuid())
+  shop         String
+  date         String // YYYY-MM-DD
+  optionSetId  String
+  fieldId      String
+  valueId      String   @default("")
+  label        String   @default("")
+  valueLabel   String   @default("")
+  orders       Int      @default(0)
+  quantity     Int      @default(0)
+  revenueMinor Int      @default(0) // shop currency minor units
+  currency     String   @default("USD")
+
+  @@unique([shop, date, optionSetId, fieldId, valueId])
+  @@index([shop, date])
+}
+
+model ProcessedOrder {
+  id           String   @id // shop + order id
+  shop         String
+  orderId      String
+  createdAt    DateTime @default(now())
+  addonMinor   Int      @default(0)
+  refundedMinor Int     @default(0)
+  // JSON [{date,optionSetId,fieldId,valueId,amountMinor,quantity}] to subtract on refunds
+  lines        String   @default("[]")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  shop        String
+  actor       String   @default("")
+  action      String
+  optionSetId String?
+  details     String   @default("")
+  createdAt   DateTime @default(now())
+
+  @@index([shop, createdAt])
+}
+
+model SyncJob {
+  id         String    @id @default(cuid())
+  shop       String
+  status     String    @default("queued") // queued | running | done | failed
+  reason     String    @default("")
+  scanned    Int       @default(0)
+  updated    Int       @default(0)
+  removed    Int       @default(0)
+  error      String?
+  createdAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  @@index([shop, createdAt])
+}
+
+// What we last wrote to each product's $app:options metafield, so syncs only
+// touch products whose resolved set actually changed.
+model ProductAssignment {
+  id          String   @id // shop + product gid
+  shop        String
+  productId   String
+  optionSetId String
+  version     Int
+  updatedAt   DateTime @updatedAt
+
+  @@index([shop, optionSetId])
+}

@@ -1,0 +1,64 @@
+{%- doc -%}
+  Renders a layout or content element of a Shine Options set: heading,
+  paragraph, divider, spacer, popup (a link that opens a dialog, e.g. a size
+  guide) or design layer (an empty marker; the script overlays the shopper's
+  text on the product image). These take no answer and have no price. Text is escaped by shine-t.
+
+  @param {object} field - Element from the option set
+  @param {string} uid - Unique id prefix for this rendering
+  @param {string} locale - Shopper locale
+  @param {string} [fallback] - Option set default locale
+
+  @example
+  {% render 'shine-display', field: field, uid: 'shine-1', locale: 'en' %}
+{%- enddoc -%}
+{%- liquid
+  assign type = field.type
+  assign fid = uid | append: '-' | append: field.id | handleize
+  assign hidden = false
+  if field.condition.rules.size > 0 and field.condition.action != 'hide'
+    assign hidden = true
+  endif
+  capture label
+    render 'shine-t', value: field.label, locale: locale, fallback: fallback
+  endcapture
+  capture text
+    render 'shine-t', value: field.text, locale: locale, fallback: fallback
+  endcapture
+  capture title
+    render 'shine-t', value: field.title, locale: locale, fallback: fallback
+  endcapture
+  assign size = field.settings.size | default: 'medium'
+  assign height = field.settings.height | default: 16 | at_least: 4 | at_most: 120
+-%}
+<div class="shine-field shine-display shine-display--{{ type | escape }}" data-shine-field="{{ field.id | escape }}"{% if type == 'design_layer' %} data-shine-layer aria-hidden="true"{% endif %}{% if hidden %} hidden{% endif %}>
+  {%- case type -%}
+    {%- when 'heading' -%}
+      <p class="shine-heading shine-heading--{{ size | escape }}" role="heading" aria-level="3">{{ label }}</p>
+    {%- when 'paragraph' -%}
+      <p class="shine-paragraph">{{ text | newline_to_br }}</p>
+    {%- when 'divider' -%}
+      <hr class="shine-divider">
+    {%- when 'spacer' -%}
+      <div class="shine-spacer" style="height: {{ height }}px" aria-hidden="true"></div>
+    {%- when 'popup' -%}
+      <button type="button" class="shine-popup__open" data-shine-popup-open="{{ fid }}-dialog" aria-haspopup="dialog">
+        {%- if field.settings.image != blank -%}
+          <img src="{{ field.settings.image | escape }}" alt="" width="24" height="24" loading="lazy">
+        {%- endif -%}
+        <span>{{ label }}</span>
+      </button>
+      <dialog class="shine-popup" id="{{ fid }}-dialog" aria-labelledby="{{ fid }}-title">
+        <div class="shine-popup__head">
+          <p class="shine-popup__title" id="{{ fid }}-title">{% if title != blank %}{{ title }}{% else %}{{ label }}{% endif %}</p>
+          <button type="button" class="shine-popup__close" data-shine-popup-close aria-label="{{ 'shine.close' | t }}">&times;</button>
+        </div>
+        <div class="shine-popup__body">
+          {%- if field.settings.image != blank -%}
+            <img src="{{ field.settings.image | escape }}" alt="" loading="lazy">
+          {%- endif -%}
+          <p>{{ text | newline_to_br }}</p>
+        </div>
+      </dialog>
+  {%- endcase -%}
+</div>

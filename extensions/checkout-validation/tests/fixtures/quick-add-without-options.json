@@ -1,0 +1,196 @@
+{
+  "payload": {
+    "export": "cart-validations-generate-run",
+    "target": "cart.validations.generate.run",
+    "input": {
+      "buyerJourney": {
+        "step": "CHECKOUT_COMPLETION"
+      },
+      "shop": {
+        "localTime": {
+          "date": "2026-11-06"
+        }
+      },
+      "validation": {
+        "config": null
+      },
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "selection": null,
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/1",
+              "product": {
+                "id": "gid://shopify/Product/1",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/2",
+            "selection": null,
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/2",
+              "product": {
+                "id": "gid://shopify/Product/2",
+                "title": "Blue Silk Tuxedo",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_tux",
+                    "v": 2,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "mono",
+                        "type": "text",
+                        "label": "Monogram on cuff",
+                        "required": true,
+                        "price": {
+                          "type": "fixed",
+                          "amount": 10
+                        },
+                        "settings": {
+                          "maxLength": 3,
+                          "charset": "letters"
+                        }
+                      },
+                      {
+                        "id": "wrap",
+                        "type": "toggle",
+                        "label": "Gift wrap",
+                        "price": {
+                          "type": "fixed",
+                          "amount": 5
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/3",
+            "selection": null,
+            "sellingPlanAllocation": null,
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "id": "gid://shopify/ProductVariant/3",
+              "product": {
+                "id": "gid://shopify/Product/3",
+                "title": "Signet ring",
+                "pricing": {
+                  "jsonValue": {
+                    "id": "set_eng",
+                    "v": 1,
+                    "defaultLocale": "en",
+                    "fields": [
+                      {
+                        "id": "f_engrave",
+                        "type": "toggle",
+                        "label": "Add engraving"
+                      },
+                      {
+                        "id": "f_text",
+                        "type": "text",
+                        "label": "Engraving text",
+                        "required": true,
+                        "price": {
+                          "type": "per_char",
+                          "amount": 5
+                        },
+                        "settings": {
+                          "minLength": 1,
+                          "maxLength": 3,
+                          "charset": "letters"
+                        },
+                        "condition": {
+                          "action": "show",
+                          "match": "all",
+                          "rules": [
+                            {
+                              "source": "field",
+                              "field": "f_engrave",
+                              "op": "not_empty"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "f_metal",
+                        "type": "dropdown",
+                        "label": "Metal",
+                        "values": [
+                          {
+                            "id": "v_silver",
+                            "label": "Silver"
+                          },
+                          {
+                            "id": "v_gold",
+                            "label": "Gold",
+                            "price": 20
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "validationAdd": {
+            "errors": [
+              {
+                "message": "Blue Silk Tuxedo needs Monogram on cuff. Go back to the product page to add it.",
+                "target": "$.cart"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

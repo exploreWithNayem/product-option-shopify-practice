@@ -1,0 +1,35 @@
+{%- doc -%}
+  Outputs a translated, escaped string from an option-set value that is either a
+  plain string or a map of locale to text.
+
+  @param {object} value - String or locale map
+  @param {string} locale - Shopper locale, for example "fr" or "pt-BR"
+  @param {string} [fallback] - Option set default locale
+
+  @example
+  {% render 'shine-t', value: field.label, locale: request.locale.iso_code, fallback: 'en' %}
+{%- enddoc -%}
+{%- liquid
+  assign shine_kind = value | json | slice: 0
+  if shine_kind == '"'
+    echo value | escape
+  elsif shine_kind == '{'
+    assign shine_out = value[locale]
+    if shine_out == blank
+      assign shine_short = locale | split: '-' | first
+      assign shine_out = value[shine_short]
+    endif
+    if shine_out == blank and fallback != blank
+      assign shine_out = value[fallback]
+    endif
+    if shine_out == blank
+      for shine_pair in value
+        if shine_pair[1] != blank
+          assign shine_out = shine_pair[1]
+          break
+        endif
+      endfor
+    endif
+    echo shine_out | escape
+  endif
+-%}
